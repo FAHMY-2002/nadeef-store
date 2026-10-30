@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
-import { getProduct } from '../data/products.js';
+import { getProduct, isService } from '../data/products.js';
 import { DELIVERY_FEE, FREE_DELIVERY_THRESHOLD, PROMO } from '../utils/format.js';
 
 const CartContext = createContext(null);
@@ -89,7 +89,9 @@ export function CartProvider({ children }) {
     const count = lines.reduce((sum, line) => sum + line.qty, 0);
     const subtotal = lines.reduce((sum, line) => sum + line.qty * line.product.price, 0);
     const discount = promoCode ? Math.round(subtotal * PROMO.rate) : 0;
-    const delivery = subtotal === 0 || subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+    // Services are visits, so only physical products need delivery.
+    const hasProducts = lines.some((line) => !isService(line.product));
+    const delivery = !hasProducts || subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
     const total = subtotal - discount + delivery;
 
     return {
@@ -99,6 +101,7 @@ export function CartProvider({ children }) {
       discount,
       delivery,
       total,
+      hasProducts,
       promoCode,
       isOpen,
       addItem,

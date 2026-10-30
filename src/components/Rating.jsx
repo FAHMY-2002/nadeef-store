@@ -12,7 +12,8 @@ export function Stars({ value = 5, size = 16 }) {
 }
 
 export default function Rating({ value, count, compact = true }) {
-  const label = `Rated ${value} out of 5 from ${formatNumber(count)} reviews`;
+  if (!count) return <span className="rating rating--empty">No reviews yet</span>;
+  const label = `Rated ${value} out of 5 from ${formatNumber(count)} ${count === 1 ? 'review' : 'reviews'}`;
   if (compact) {
     return (
       <span className="rating" aria-label={label}>
@@ -26,7 +27,9 @@ export default function Rating({ value, count, compact = true }) {
     <span className="rating rating--full" aria-label={label}>
       <Stars value={value} />
       <strong>{value}</strong>
-      <span>{formatNumber(count)} reviews</span>
+      <span>
+        {formatNumber(count)} {count === 1 ? 'review' : 'reviews'}
+      </span>
     </span>
   );
 }

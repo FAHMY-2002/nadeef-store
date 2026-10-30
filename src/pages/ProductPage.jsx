@@ -1,26 +1,43 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
-import ProductArt from '../components/ProductArt.jsx';
+import ProductMedia from '../components/ProductMedia.jsx';
 import ProductCard, { Price } from '../components/ProductCard.jsx';
+import ProductReviews from '../components/ProductReviews.jsx';
 import QuantityStepper from '../components/QuantityStepper.jsx';
 import Rating from '../components/Rating.jsx';
 import NotFound from './NotFound.jsx';
 import { useCart } from '../context/CartContext.jsx';
-import { getCategory, getProduct, products } from '../data/products.js';
+import { useReviews } from '../context/ReviewsContext.jsx';
+import { getCategory, getProduct, isService, products } from '../data/products.js';
 import { FREE_DELIVERY_THRESHOLD, discountPercent, formatPrice } from '../utils/format.js';
 
-const TABS = [
-  { id: 'details', label: 'Details' },
-  { id: 'how', label: 'How to use' },
-  { id: 'ingredients', label: 'Ingredients' },
-];
+const COPY = {
+  product: {
+    tabs: { details: 'Details', how: 'How to use', more: 'Ingredients' },
+    chips: [
+      ['leaf', 'Plant-based'],
+      ['shield', 'Cruelty-free'],
+      ['refill', 'Recyclable'],
+    ],
+    add: 'Add to cart',
+    now: 'Buy now',
+  },
+  service: {
+    tabs: { details: 'What’s included', how: 'How it works', more: 'Good to know' },
+    chips: [
+      ['shield', 'Vetted pros'],
+      ['check', 'Work warranty'],
+      ['cash', 'Pay after visit'],
+    ],
+    add: 'Add booking',
+    now: 'Book now',
+  },
+};
 
 function relatedTo(product) {
   const sameCategory = products.filter((p) => p.category === product.category && p.id !== product.id);
-  const others = products
-    .filter((p) => p.category !== product.category)
-    .sort((a, b) => b.popular - a.popular);
+  const others = products.filter((p) => p.category !== product.category).sort((a, b) => b.popular - a.popular);
   return [...sameCategory, ...others].slice(0, 4);
 }
 
@@ -29,6 +46,7 @@ export default function ProductPage() {
   const product = getProduct(id);
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { statsFor } = useReviews();
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState('details');
 
@@ -39,13 +57,18 @@ export default function ProductPage() {
 
   if (!product) return <NotFound />;
 
+  const service = isService(product);
+  const copy = service ? COPY.service : COPY.product;
   const category = getCategory(product.category);
+  const stats = statsFor(product.id);
   const off = discountPercent(product);
 
   const buyNow = () => {
     addItem(product.id, qty, { openDrawer: false });
     navigate('/checkout');
   };
+
+  const scrollToReviews = () => document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <>
@@ -61,19 +84,22 @@ export default function ProductPage() {
         <div className="pdp">
           <div className="pdp__gallery">
             <div className="pdp__media" style={{ '--tint': product.tint }}>
-              {product.badge && <span className="badge pdp__badge">{product.badge}</span>}
-              <ProductArt product={product} />
+              <div className="badges pdp__badges">
+                {service && (
+                  <span className="badge badge--service">
+                    <Icon name="calendar" size={13} /> Service
+                  </span>
+                )}
+                {product.badge && <span className="badge">{product.badge}</span>}
+              </div>
+              <ProductMedia product={product} width={1100} />
             </div>
             <ul className="pdp__chips">
-              <li>
-                <Icon name="leaf" size={18} /> Plant-based
-              </li>
-              <li>
-                <Icon name="shield" size={18} /> Cruelty-free
-              </li>
-              <li>
-                <Icon name="refill" size={18} /> Recyclable
-              </li>
+              {copy.chips.map(([icon, label]) => (
+                <li key={label}>
+                  <Icon name={icon} size={18} /> {label}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -85,7 +111,9 @@ export default function ProductPage() {
                 {product.scent} · {product.size}
               </p>
             </div>
-            <Rating value={product.rating} count={product.reviews} compact={false} />
+            <button type="button" className="pdp__rating-link" onClick={scrollToReviews} disabled={!stats.count}>
+              <Rating value={stats.average} count={stats.count} compact={false} />
+            </button>
             <div className="pdp__price">
               <Price product={product} className="price price--lg" />
               {off > 0 && <span className="badge badge--sale">Save {off}%</span>}
@@ -93,49 +121,74 @@ export default function ProductPage() {
             <p className="pdp__desc">{product.description}</p>
 
             <div className="pdp__buy">
-              <QuantityStepper value={qty} onChange={setQty} size="lg" />
+              <QuantityStepper value={qty} onChange={setQty} size="lg" label={service ? 'Number of visits or units' : 'Quantity'} />
               <button type="button" className="btn btn-lime btn-lg" onClick={() => addItem(product.id, qty)}>
-                <Icon name="bag" size={19} /> Add to cart · {formatPrice(product.price * qty)}
+                <Icon name={service ? 'calendar' : 'bag'} size={19} /> {copy.add} · {formatPrice(product.price * qty)}
               </button>
               <button type="button" className="btn btn-forest btn-lg" onClick={buyNow}>
-                Buy now
+                {copy.now}
               </button>
             </div>
 
             <ul className="perks">
-              <li>
-                <Icon name="truck" />
-                <span>
-                  <strong>Free delivery</strong> on orders over {formatPrice(FREE_DELIVERY_THRESHOLD)}. Next day in Cairo and Giza.
-                </span>
-              </li>
-              <li>
-                <Icon name="cash" />
-                <span>
-                  <strong>Cash or card</strong> on delivery
-                </span>
-              </li>
-              <li>
-                <Icon name="refill" />
-                <span>
-                  <strong>Free returns</strong> on unopened products within 14 days
-                </span>
-              </li>
+              {service ? (
+                <>
+                  <li>
+                    <Icon name="calendar" />
+                    <span>
+                      <strong>Pick your day and time</strong> at checkout. Same-week slots in Cairo and Giza.
+                    </span>
+                  </li>
+                  <li>
+                    <Icon name="cash" />
+                    <span>
+                      <strong>Pay after the visit</strong>, in cash or by card
+                    </span>
+                  </li>
+                  <li>
+                    <Icon name="shield" />
+                    <span>
+                      <strong>Warranty on the work</strong>, with parts quoted before anything starts
+                    </span>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Icon name="truck" />
+                    <span>
+                      <strong>Free delivery</strong> on orders over {formatPrice(FREE_DELIVERY_THRESHOLD)}. Next day in Cairo and Giza.
+                    </span>
+                  </li>
+                  <li>
+                    <Icon name="cash" />
+                    <span>
+                      <strong>Cash or card</strong> on delivery
+                    </span>
+                  </li>
+                  <li>
+                    <Icon name="refill" />
+                    <span>
+                      <strong>Free returns</strong> on unopened products within 14 days
+                    </span>
+                  </li>
+                </>
+              )}
             </ul>
 
             <div className="pdp-tabs">
               <div className="pdp-tabs__list" role="tablist" aria-label="Product information">
-                {TABS.map((t) => (
+                {Object.entries(copy.tabs).map(([key, label]) => (
                   <button
-                    key={t.id}
+                    key={key}
                     type="button"
                     role="tab"
-                    id={`tab-${t.id}`}
-                    aria-selected={tab === t.id}
-                    aria-controls={`panel-${t.id}`}
-                    onClick={() => setTab(t.id)}
+                    id={`tab-${key}`}
+                    aria-selected={tab === key}
+                    aria-controls={`panel-${key}`}
+                    onClick={() => setTab(key)}
                   >
-                    {t.label}
+                    {label}
                   </button>
                 ))}
               </div>
@@ -150,12 +203,14 @@ export default function ProductPage() {
                   </ul>
                 )}
                 {tab === 'how' && <p>{product.howTo}</p>}
-                {tab === 'ingredients' && <p>{product.ingredients}</p>}
+                {tab === 'more' && <p>{product.ingredients}</p>}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <ProductReviews key={product.id} product={product} />
 
       <section className="section section--mist related" aria-labelledby="related-title">
         <div className="container">

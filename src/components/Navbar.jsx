@@ -7,9 +7,9 @@ import { useCart } from '../context/CartContext.jsx';
 const LINKS = [
   { to: '/', label: 'Home' },
   { to: '/shop', label: 'Shop all' },
-  { to: '/shop?cat=kitchen', label: 'Kitchen' },
-  { to: '/shop?cat=bathroom', label: 'Bathroom' },
-  { to: '/shop?cat=laundry', label: 'Laundry' },
+  { to: '/shop?cat=home-cleaning', label: 'Home Cleaning' },
+  { to: '/shop?cat=plumbing', label: 'Plumbing' },
+  { to: '/shop?cat=ac', label: 'AC Services' },
 ];
 
 // NavLink only compares the path, so "/shop" and "/shop?cat=kitchen" would both

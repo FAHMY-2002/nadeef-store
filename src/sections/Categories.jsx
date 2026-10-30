@@ -8,10 +8,10 @@ export default function Categories() {
       <div className="container">
         <div className="section-head section-head--split">
           <div>
-            <span className="eyebrow">Shop by room</span>
-            <h2 id="categories-title">Everything your home needs, sorted by room</h2>
+            <span className="eyebrow">Shop &amp; book</span>
+            <h2 id="categories-title">Everything your home needs, in one place</h2>
           </div>
-          <p>From the kitchen sink to the laundry basket, each range is made for the mess it meets.</p>
+          <p>Book a cleaner, a plumber or an AC technician, or stock up on cleaning products for every room.</p>
         </div>
         <div className="cat-grid">
           {categories.map((category) => {
@@ -24,7 +24,7 @@ export default function Categories() {
                 <h3>{category.name}</h3>
                 <p>{category.blurb}</p>
                 <span className="cat-card__foot">
-                  {count} {count === 1 ? 'product' : 'products'}
+                  {count} {count === 1 ? 'item' : 'items'}
                   <Icon name="arrowUpRight" size={18} />
                 </span>
               </Link>

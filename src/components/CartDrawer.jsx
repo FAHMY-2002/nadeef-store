@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from './Icon.jsx';
-import ProductArt from './ProductArt.jsx';
+import ProductMedia from './ProductMedia.jsx';
 import QuantityStepper from './QuantityStepper.jsx';
 import FreeDeliveryBar from './FreeDeliveryBar.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { formatPrice } from '../utils/format.js';
 
 export default function CartDrawer() {
-  const { isOpen, closeCart, lines, count, subtotal, setQty, removeItem } = useCart();
+  const { isOpen, closeCart, lines, count, subtotal, hasProducts, setQty, removeItem } = useCart();
   const navigate = useNavigate();
   const closeButtonRef = useRef(null);
 
@@ -55,9 +55,11 @@ export default function CartDrawer() {
           </div>
         ) : (
           <>
-            <div className="drawer__ship">
-              <FreeDeliveryBar subtotal={subtotal} />
-            </div>
+            {hasProducts && (
+              <div className="drawer__ship">
+                <FreeDeliveryBar subtotal={subtotal} />
+              </div>
+            )}
             <ul className="drawer__body">
               {lines.map(({ product, qty }) => (
                 <li key={product.id} className="line-item">
@@ -69,7 +71,7 @@ export default function CartDrawer() {
                     tabIndex={-1}
                     aria-hidden="true"
                   >
-                    <ProductArt product={product} decorative />
+                    <ProductMedia product={product} width={200} decorative />
                   </Link>
                   <div className="line-item__info">
                     <Link to={`/product/${product.id}`} className="line-item__name" onClick={closeCart}>

@@ -1,37 +1,26 @@
+import { Link } from 'react-router-dom';
 import { Stars } from '../components/Rating.jsx';
+import { ReviewCard } from '../components/ProductReviews.jsx';
+import { useReviews } from '../context/ReviewsContext.jsx';
+import { getProduct } from '../data/products.js';
 
-// Placeholder reviews for the template. Replace them with real customer reviews.
-const REVIEWS = [
-  {
-    title: 'My kitchen has never smelled this good',
-    text: 'The degreaser took the grease off my range hood in one wipe. No headache from the smell either, which is a first.',
-    name: 'Mariam H.',
-    place: 'New Cairo',
-    product: 'Kitchen Degreaser',
-    initials: 'MH',
-    color: '#F5D45E',
-  },
-  {
-    title: 'Safe with a toddler around',
-    text: 'We switched everything after our son started crawling. The floor cleaner works well and I don’t worry when he plays on the floor.',
-    name: 'Ahmed K.',
-    place: 'Sheikh Zayed',
-    product: 'Floor Cleaner',
-    initials: 'AK',
-    color: '#8EC5EA',
-  },
-  {
-    title: 'Refills make it an easy choice',
-    text: 'I keep the same bottles and order refill pouches every month. Delivery is quick and the price beats the supermarket brands.',
-    name: 'Salma N.',
-    place: 'Alexandria',
-    product: 'Dish Soap Refill',
-    initials: 'SN',
-    color: '#F2B5AA',
-  },
+// Reviews featured on the home page: [product id, reviewer name].
+const FEATURED = [
+  ['home-cleaning-regular', 'Noha Ragab'],
+  ['ac-maintenance', 'Mohamed Zaki'],
+  ['plumber-visit', 'Walid Ezzat'],
 ];
 
 export default function Testimonials() {
+  const { reviewsFor, overall } = useReviews();
+  const featured = FEATURED.map(([productId, name]) => {
+    const review = reviewsFor(productId).find((r) => r.name === name);
+    return review && { review, product: getProduct(productId) };
+  }).filter(Boolean);
+
+  if (featured.length === 0) return null;
+  const hasSamples = featured.some(({ review }) => review.sample);
+
   return (
     <section className="section section--mist" aria-labelledby="reviews-title">
       <div className="container">
@@ -41,34 +30,26 @@ export default function Testimonials() {
             <h2 id="reviews-title">Loved in homes across Egypt</h2>
           </div>
           <div className="rating-summary">
-            <strong>4.9</strong>
+            <strong>{overall.average.toFixed(1)}</strong>
             <div>
-              <Stars value={5} size={18} />
-              <span>From 8,700+ verified reviews</span>
+              <Stars value={overall.average} size={18} />
+              <span>From {overall.count} reviews</span>
             </div>
           </div>
         </div>
-        <div className="reviews">
-          {REVIEWS.map((review) => (
-            <figure key={review.name} className="review">
-              <Stars value={5} />
-              <blockquote>
-                <h3>{review.title}</h3>
-                <p>{review.text}</p>
-              </blockquote>
-              <span className="review__product">Bought: {review.product}</span>
-              <figcaption className="review__author">
-                <span className="review__avatar" style={{ background: review.color }} aria-hidden="true">
-                  {review.initials}
-                </span>
-                <span>
-                  <strong>{review.name}</strong>
-                  <span>{review.place}</span>
-                </span>
-              </figcaption>
-            </figure>
+        <ul className="reviews">
+          {featured.map(({ review, product }) => (
+            <li key={review.id} className="review">
+              <ul className="review__inner">
+                <ReviewCard review={review} />
+              </ul>
+              <Link to={`/product/${product.id}`} className="review__product">
+                {product.name} →
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
+        {hasSamples && <p className="reviews-note">Reviews marked “Sample review” are examples, not customer reviews.</p>}
       </div>
     </section>
   );

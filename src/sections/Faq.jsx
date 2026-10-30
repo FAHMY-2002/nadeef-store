@@ -8,8 +8,12 @@ const QUESTIONS = [
     a: `We deliver across Egypt. Orders placed before 6 PM reach Cairo and Giza the next day; other governorates take 2 to 4 working days. Delivery is free on orders over ${formatPrice(FREE_DELIVERY_THRESHOLD)}, otherwise it costs ${formatPrice(DELIVERY_FEE)}.`,
   },
   {
+    q: 'How do service visits work?',
+    a: 'Choose a day and time slot at checkout. A vetted technician calls the day before to confirm, then arrives within your slot. Any parts are quoted before work starts, and you pay after the visit.',
+  },
+  {
     q: 'How can I pay?',
-    a: 'You can pay cash on delivery or by card on delivery. The courier carries a card machine.',
+    a: 'Pay in cash or by card when your order arrives or after the visit. Couriers and technicians carry a card machine.',
   },
   {
     q: 'Are your products safe around kids and pets?',

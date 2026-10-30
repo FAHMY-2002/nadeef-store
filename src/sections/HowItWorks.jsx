@@ -4,16 +4,16 @@ import { getProduct } from '../data/products.js';
 
 const STEPS = [
   {
-    title: 'Pick your favourites',
-    text: 'Shop by room or by scent. Not sure where to start? Our best sellers cover the whole home.',
+    title: 'Pick products or book a service',
+    text: 'Shop cleaning products by room, or book home cleaning, plumbing or AC maintenance and choose your day and time slot.',
   },
   {
-    title: 'We deliver to your door',
-    text: 'Next-day delivery in Cairo and Giza, 2 to 4 working days everywhere else. Pay cash or card when it arrives.',
+    title: 'We deliver, or send a pro',
+    text: 'Products arrive next day in Cairo and Giza. For services, a vetted technician calls to confirm, then visits on time.',
   },
   {
-    title: 'Refill and save',
-    text: 'Keep your bottles and top them up with refill pouches. You save up to 40% and use about 70% less plastic.',
+    title: 'Pay when it’s done',
+    text: 'Pay cash or card on delivery or after the visit. Service work comes with a warranty, and refills save you up to 40%.',
   },
 ];
 
@@ -46,7 +46,7 @@ export default function HowItWorks() {
 
         <div className="steps__content">
           <span className="eyebrow">How it works</span>
-          <h2 id="how-title">From our shelf to your sink in three steps</h2>
+          <h2 id="how-title">Products or a pro at your door in three steps</h2>
           <ol className="steps__list">
             {STEPS.map((step, index) => (
               <li key={step.title}>

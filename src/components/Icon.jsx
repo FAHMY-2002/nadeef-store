@@ -121,7 +121,24 @@ const paths = {
     </>
   ),
   drop: <path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z" />,
+  wrench: (
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.4-3.4a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9l-3.4 3.4z" />
+  ),
+  snow: (
+    <path d="M12 2.5v19M3.8 7.25l16.4 9.5M20.2 7.25l-16.4 9.5M9.2 4l2.8 2 2.8-2M9.2 20l2.8-2 2.8 2M3.5 10.6l3.4-.3-1.4-3.1M20.5 13.4l-3.4.3 1.4 3.1M18.5 7.2l-1.4 3.1 3.4.3M5.5 16.8l1.4-3.1-3.4-.3" />
+  ),
+  home: <path d="M4 10.8 12 4l8 6.8V19a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1v-8.2z" />,
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </>
+  ),
+  chat: <path d="M5 5h14a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 17h-8l-4.5 3.5V17H5a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 5 5z" />,
 };
+
+// Used by ProductArt to draw an icon inside its SVG.
+export const iconPaths = paths;
 
 const FILLED = new Set(['star', 'sparkle']);
 

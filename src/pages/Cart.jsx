@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import FreeDeliveryBar from '../components/FreeDeliveryBar.jsx';
 import Icon from '../components/Icon.jsx';
-import ProductArt from '../components/ProductArt.jsx';
+import ProductMedia from '../components/ProductMedia.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import QuantityStepper from '../components/QuantityStepper.jsx';
 import { PromoForm, Totals } from '../components/OrderSummary.jsx';
@@ -10,7 +10,7 @@ import { products } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 
 export default function Cart() {
-  const { lines, count, subtotal, setQty, removeItem } = useCart();
+  const { lines, count, subtotal, hasProducts, setQty, removeItem } = useCart();
 
   if (lines.length === 0) {
     const picks = [...products].sort((a, b) => b.popular - a.popular).slice(0, 4);
@@ -64,7 +64,7 @@ export default function Cart() {
             {lines.map(({ product, qty }) => (
               <li key={product.id} className="cart-row">
                 <Link to={`/product/${product.id}`} className="cart-row__media" style={{ '--tint': product.tint }} tabIndex={-1} aria-hidden="true">
-                  <ProductArt product={product} decorative />
+                  <ProductMedia product={product} width={240} decorative />
                 </Link>
                 <div className="cart-row__info">
                   <Link to={`/product/${product.id}`} className="cart-row__name">
@@ -92,16 +92,18 @@ export default function Cart() {
 
         <aside className="summary" aria-labelledby="summary-title">
           <h2 id="summary-title">Order summary</h2>
-          <div className="summary__ship">
-            <FreeDeliveryBar subtotal={subtotal} />
-          </div>
+          {hasProducts && (
+            <div className="summary__ship">
+              <FreeDeliveryBar subtotal={subtotal} />
+            </div>
+          )}
           <PromoForm />
           <Totals />
           <Link to="/checkout" className="btn btn-forest btn-lg btn-block">
             Go to checkout <Icon name="arrowRight" size={18} />
           </Link>
           <p className="summary__note">
-            <Icon name="shield" size={16} /> Pay cash or card when your order arrives.
+            <Icon name="shield" size={16} /> Pay cash or card on delivery or after the visit.
           </p>
         </aside>
       </div>

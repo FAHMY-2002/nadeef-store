@@ -1,6 +1,7 @@
 // Drawn product packshots. Each product picks a `shape` and a colour set,
 // so the store looks finished before you have real product photos.
-// To use photos instead, render <img src={product.image} alt={product.name} /> where <ProductArt> is used.
+// Products with an `image` show a photo through ProductMedia.jsx; this drawing is the fallback.
+import { iconPaths } from './Icon.jsx';
 
 const INK = '#184F46';
 const DISPLAY_FONT = "'Bricolage Grotesque', Figtree, sans-serif";
@@ -153,7 +154,24 @@ function Cloth({ c }) {
   );
 }
 
-const SHAPES = { spray: Spray, bottle: Bottle, jug: Jug, jar: Jar, pouch: Pouch, brush: Brush, cloth: Cloth };
+// Services (and products without a drawn shape) get an icon tile.
+function ServiceTile({ c, icon }) {
+  return (
+    <>
+      <Shadow rx={62} />
+      <rect x="36" y="56" width="128" height="128" rx="38" fill={c.body} />
+      <rect x="36" y="56" width="128" height="128" rx="38" fill="none" stroke={c.cap} strokeOpacity=".12" strokeWidth="2" />
+      <svg x="64" y="84" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke={c.cap} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        {iconPaths[icon] ?? iconPaths.sparkle}
+      </svg>
+      <text x="100" y="214" textAnchor="middle" fontFamily={DISPLAY_FONT} fontWeight="700" fontSize="14" fill={INK} opacity=".7">
+        nadeef
+      </text>
+    </>
+  );
+}
+
+const SHAPES = { spray: Spray, bottle: Bottle, jug: Jug, jar: Jar, pouch: Pouch, brush: Brush, cloth: Cloth, service: ServiceTile };
 
 export default function ProductArt({ product, className, decorative = false }) {
   const Shape = SHAPES[product.shape] ?? Bottle;
@@ -165,7 +183,7 @@ export default function ProductArt({ product, className, decorative = false }) {
       aria-label={decorative ? undefined : `${product.name}, ${product.scent}`}
       aria-hidden={decorative ? 'true' : undefined}
     >
-      <Shape c={product.colors} label={product.label} size={product.size} />
+      <Shape c={product.colors} label={product.label} size={product.size} icon={product.icon} />
     </svg>
   );
 }

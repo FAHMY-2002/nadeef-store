@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import ProductArt from '../components/ProductArt.jsx';
 import { getProduct } from '../data/products.js';
+import { useReviews } from '../context/ReviewsContext.jsx';
 
 const AVATARS = [
   { initials: 'MH', color: '#F5D45E' },
@@ -14,6 +15,7 @@ const AVATARS = [
 export default function Hero() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const { overall } = useReviews();
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -29,7 +31,7 @@ export default function Hero() {
         <div className="hero">
           <div className="hero__content">
             <span className="pill pill--glass">
-              <Icon name="leaf" size={16} /> Plant-based · Made in Egypt
+              <Icon name="leaf" size={16} /> Products &amp; home services
             </span>
             <h1 id="hero-title" className="hero__title">
               Spotless homes,{' '}
@@ -39,8 +41,8 @@ export default function Hero() {
               </span>
             </h1>
             <p className="hero__lead">
-              Plant-based cleaners for every room, delivered to your door. Tough on grease and stains, gentle on hands,
-              and safe around kids and pets.
+              Plant-based cleaners delivered to your door, and trusted pros for home cleaning, plumbing and AC
+              maintenance, booked in a minute.
             </p>
             <div className="hero__actions">
               <Link to="/shop" className="btn btn-lime btn-lg">
@@ -50,7 +52,7 @@ export default function Hero() {
                 </span>
               </Link>
               <button type="button" className="btn btn-ghost-light btn-lg" onClick={scrollToCategories}>
-                Shop by room
+                Book a service
               </button>
             </div>
             <div className="hero__proof">
@@ -63,9 +65,11 @@ export default function Hero() {
               </div>
               <div>
                 <strong>12K+ happy homes</strong>
-                <span className="hero__rating">
-                  <Icon name="star" size={14} /> 4.9 average from 8,700+ reviews
-                </span>
+                {overall.count > 0 && (
+                  <span className="hero__rating">
+                    <Icon name="star" size={14} /> {overall.average.toFixed(1)} average from {overall.count} reviews
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -94,7 +98,7 @@ export default function Hero() {
               <input
                 id="hero-search"
                 type="search"
-                placeholder="Try “dish soap” or “floor”"
+                placeholder="Try “AC” or “dish soap”"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />

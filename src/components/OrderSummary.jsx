@@ -64,7 +64,7 @@ export function PromoForm() {
 }
 
 export function Totals() {
-  const { subtotal, discount, delivery, total } = useCart();
+  const { subtotal, discount, delivery, total, hasProducts } = useCart();
   return (
     <div className="totals">
       <div className="summary-row">
@@ -77,10 +77,12 @@ export function Totals() {
           <span>−{formatPrice(discount)}</span>
         </div>
       )}
-      <div className="summary-row">
-        <span>Delivery</span>
-        <span>{delivery === 0 ? 'Free' : formatPrice(delivery)}</span>
-      </div>
+      {hasProducts && (
+        <div className="summary-row">
+          <span>Delivery</span>
+          <span>{delivery === 0 ? 'Free' : formatPrice(delivery)}</span>
+        </div>
+      )}
       <div className="summary-row summary-row--total summary-row--divider">
         <span>Total</span>
         <span>{formatPrice(total)}</span>

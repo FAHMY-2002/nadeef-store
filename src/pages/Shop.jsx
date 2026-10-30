@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import { useReviews } from '../context/ReviewsContext.jsx';
 import { categories, countInCategory, getCategory, products } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 
@@ -14,7 +15,8 @@ const SORTS = [
 ];
 
 const PRICE_MIN = 50;
-const PRICE_MAX = Math.ceil(Math.max(...products.map((p) => p.price)) / 50) * 50;
+const PRICE_STEP = 50;
+const PRICE_MAX = Math.ceil(Math.max(...products.map((p) => p.price)) / PRICE_STEP) * PRICE_STEP;
 
 export default function Shop() {
   const [params, setParams] = useSearchParams();
@@ -24,6 +26,7 @@ export default function Shop() {
   const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
   const [saleOnly, setSaleOnly] = useState(false);
   const searchRef = useRef(null);
+  const { statsFor } = useReviews();
 
   useEffect(() => {
     if (params.get('focus') === 'search') searchRef.current?.focus();
@@ -54,12 +57,12 @@ export default function Shop() {
     });
     const sorters = {
       popular: (a, b) => b.popular - a.popular,
-      rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews,
+      rating: (a, b) => statsFor(b.id).average - statsFor(a.id).average || statsFor(b.id).count - statsFor(a.id).count,
       'price-asc': (a, b) => a.price - b.price,
       'price-desc': (a, b) => b.price - a.price,
     };
     return sorters[sort] ? [...list].sort(sorters[sort]) : list;
-  }, [category, query, sort, maxPrice, saleOnly]);
+  }, [category, query, sort, maxPrice, saleOnly, statsFor]);
 
   const activeCategory = getCategory(category);
   const hasFilters = category !== 'all' || query || maxPrice < PRICE_MAX || saleOnly;
@@ -82,8 +85,8 @@ export default function Shop() {
           <h1>{activeCategory ? activeCategory.name : 'All products'}</h1>
           <p>
             {activeCategory
-              ? `${activeCategory.blurb}. Plant-based, refillable and delivered across Egypt.`
-              : 'Plant-based cleaners, refills and tools for every room in the house.'}
+              ? `${activeCategory.blurb}. Delivered or booked across Egypt.`
+              : 'Cleaning products, plus home cleaning, plumbing and AC services you can book online.'}
           </p>
         </div>
       </section>
@@ -121,7 +124,7 @@ export default function Shop() {
                 type="range"
                 min={PRICE_MIN}
                 max={PRICE_MAX}
-                step={10}
+                step={PRICE_STEP}
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
               />
@@ -159,7 +162,7 @@ export default function Shop() {
                 id="shop-search"
                 className="input"
                 type="search"
-                placeholder="Search by product or scent"
+                placeholder="Search products and services"
                 value={query}
                 onChange={(e) => updateParam('q', e.target.value, '')}
               />

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
-import ProductArt from '../components/ProductArt.jsx';
+import ProductMedia from '../components/ProductMedia.jsx';
 import { PromoForm, Totals } from '../components/OrderSummary.jsx';
 import { useCart } from '../context/CartContext.jsx';
+import { isService } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 
 const GOVERNORATES = [
@@ -13,13 +14,33 @@ const GOVERNORATES = [
 ];
 
 const PAYMENT_METHODS = [
-  { id: 'cash', label: 'Cash on delivery', note: 'Pay the courier when your order arrives', icon: 'cash' },
-  { id: 'card', label: 'Card on delivery', note: 'The courier brings a card machine', icon: 'card' },
+  { id: 'cash', label: 'Cash', note: 'Pay when your order arrives or after the visit', icon: 'cash' },
+  { id: 'card', label: 'Card', note: 'The courier or technician brings a card machine', icon: 'card' },
 ];
 
-const EMPTY_FORM = { fullName: '', phone: '', email: '', governorate: 'Cairo', area: '', address: '', notes: '', payment: 'cash' };
+export const VISIT_SLOTS = ['Morning, 9 AM – 12 PM', 'Afternoon, 12 – 4 PM', 'Evening, 4 – 8 PM'];
 
-function validate(form) {
+const EMPTY_FORM = {
+  fullName: '',
+  phone: '',
+  email: '',
+  governorate: 'Cairo',
+  area: '',
+  address: '',
+  notes: '',
+  visitDate: '',
+  visitSlot: VISIT_SLOTS[0],
+  payment: 'cash',
+};
+
+// Earliest visit is tomorrow, latest is 30 days ahead (YYYY-MM-DD in local time).
+function dayFromToday(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function validate(form, { needsVisit }) {
   const errors = {};
   if (form.fullName.trim().length < 3) errors.fullName = 'Enter your full name so the courier knows who to ask for.';
   if (!/^01[0125]\d{8}$/.test(form.phone.replace(/\s|-/g, '')))
@@ -27,6 +48,9 @@ function validate(form) {
   if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Enter a valid email address, or leave it empty.';
   if (!form.area.trim()) errors.area = 'Enter your area or district, like Maadi or Smouha.';
   if (form.address.trim().length < 8) errors.address = 'Add the street, building and apartment number.';
+  if (needsVisit && !form.visitDate) errors.visitDate = 'Choose a day for the visit.';
+  else if (needsVisit && (form.visitDate < dayFromToday(1) || form.visitDate > dayFromToday(30)))
+    errors.visitDate = 'Choose a day between tomorrow and 30 days from now.';
   return errors;
 }
 
@@ -54,6 +78,8 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
+  const hasServices = lines.some((line) => isService(line.product));
+  const hasProducts = lines.some((line) => !isService(line.product));
 
   if (lines.length === 0) {
     return (
@@ -85,7 +111,7 @@ export default function Checkout() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const found = validate(form);
+    const found = validate(form, { needsVisit: hasServices });
     setErrors(found);
     const firstError = Object.keys(found)[0];
     if (firstError) {
@@ -97,13 +123,14 @@ export default function Checkout() {
     const order = {
       number: `NDF-${Math.floor(100000 + Math.random() * 900000)}`,
       customer: form,
-      lines: lines.map(({ product, qty }) => ({ id: product.id, name: product.name, scent: product.scent, qty, price: product.price })),
+      lines: lines.map(({ product, qty }) => ({ id: product.id, name: product.name, scent: product.scent, qty, price: product.price, service: isService(product) })),
       subtotal,
       discount,
       delivery,
       total,
       promoCode,
-      estimate: deliveryEstimate(form.governorate),
+      estimate: hasProducts ? deliveryEstimate(form.governorate) : null,
+      visit: hasServices ? { date: form.visitDate, slot: form.visitSlot } : null,
       placedAt: new Date().toISOString(),
     };
     clearCart();
@@ -148,7 +175,7 @@ export default function Checkout() {
 
           <fieldset className="form-section">
             <legend>
-              <span className="step-dot">2</span> Delivery address
+              <span className="step-dot">2</span> {hasProducts ? 'Delivery address' : 'Visit address'}
             </legend>
             <div className="form-grid">
               <Field id="governorate" label="Governorate">
@@ -167,19 +194,50 @@ export default function Checkout() {
                 </Field>
               </div>
               <div className="span-2">
-                <Field id="notes" label="Notes for the courier" optional>
+                <Field id="notes" label={hasProducts ? 'Notes for the courier' : 'Notes for the technician'} optional>
                   <textarea className="textarea" placeholder="Landmark, best time to call…" {...inputProps('notes')} />
                 </Field>
               </div>
             </div>
-            <p className="delivery-estimate">
-              <Icon name="truck" size={18} /> Estimated delivery: <strong>{deliveryEstimate(form.governorate)}</strong>
-            </p>
+            {hasProducts && (
+              <p className="delivery-estimate">
+                <Icon name="truck" size={18} /> Estimated delivery: <strong>{deliveryEstimate(form.governorate)}</strong>
+              </p>
+            )}
           </fieldset>
+
+          {hasServices && (
+            <fieldset className="form-section">
+              <legend>
+                <span className="step-dot">3</span> Visit time
+              </legend>
+              <div className="form-grid">
+                <Field id="visitDate" label="Preferred day" error={errors.visitDate}>
+                  <input className="input" type="date" min={dayFromToday(1)} max={dayFromToday(30)} {...inputProps('visitDate')} />
+                </Field>
+                <div className="field">
+                  <span className="field__label" id="slot-label">
+                    Time slot
+                  </span>
+                  <div className="slot-options" role="radiogroup" aria-labelledby="slot-label">
+                    {VISIT_SLOTS.map((slot) => (
+                      <label key={slot} className="slot-option">
+                        <input type="radio" name="visitSlot" value={slot} checked={form.visitSlot === slot} onChange={update('visitSlot')} />
+                        <span>{slot}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="delivery-estimate">
+                <Icon name="phone" size={18} /> The technician calls to confirm the day before the visit.
+              </p>
+            </fieldset>
+          )}
 
           <fieldset className="form-section">
             <legend>
-              <span className="step-dot">3</span> Payment
+              <span className="step-dot">{hasServices ? 4 : 3}</span> Payment
             </legend>
             <div className="pay-options">
               {PAYMENT_METHODS.map((method) => (
@@ -213,7 +271,7 @@ export default function Checkout() {
             {lines.map(({ product, qty }) => (
               <li key={product.id} className="mini-line">
                 <span className="mini-line__media" style={{ '--tint': product.tint }}>
-                  <ProductArt product={product} decorative />
+                  <ProductMedia product={product} width={160} decorative />
                   <span className="mini-line__qty">{qty}</span>
                 </span>
                 <span className="mini-line__name">
@@ -230,7 +288,7 @@ export default function Checkout() {
             Place order · {formatPrice(total)}
           </button>
           <p className="summary__note">
-            <Icon name="shield" size={16} /> No payment now. You pay when your order arrives.
+            <Icon name="shield" size={16} /> No payment now. You pay on delivery or after the visit.
           </p>
         </aside>
       </div>
