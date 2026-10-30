@@ -108,7 +108,7 @@ export default function Footer() {
                 <Icon name="mail" size={16} /> hello@nadeef.example
               </li>
               <li>
-                <Icon name="pin" size={16} /> New Cairo, Egypt
+                <Icon name="pin" size={16} /> Alexandria, Egypt
               </li>
               <li>
                 <Icon name="clock" size={16} /> Daily, 9 AM – 10 PM

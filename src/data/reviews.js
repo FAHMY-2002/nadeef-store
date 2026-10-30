@@ -7,7 +7,7 @@ export const SHOW_SAMPLE_REVIEWS = true;
 // [name, area, rating 1-5, date (YYYY-MM-DD), review text]
 const SAMPLE = {
   'all-purpose-lemon': [
-    ['Mariam Hassan', 'New Cairo', 5, '2026-10-12', 'Works on everything in my kitchen and the lemon smell is fresh, not chemical. I bought a second bottle for the bathroom.'],
+    ['Mariam Hassan', 'Alexandria', 5, '2026-10-12', 'Works on everything in my kitchen and the lemon smell is fresh, not chemical. I bought a second bottle for the bathroom.'],
     ['أحمد سمير', 'مدينة نصر', 5, '2026-09-28', 'ممتاز جدًا على الرخام والسيراميك ومبيسيبش أثر. الريحة حلوة ومش خانقة.'],
     ['Nour El-Din', 'Maadi', 4, '2026-09-03', 'Cleans well and dries without streaks. I wish the bottle were a bit bigger.'],
   ],
@@ -17,7 +17,7 @@ const SAMPLE = {
     ['هبة فاروق', 'الدقي', 5, '2026-08-30', 'أحسن من أي منظف زجاج جربته قبل كده، ومن غير ريحة النشادر.'],
   ],
   'degreaser-lime-mint': [
-    ['Mariam H.', 'New Cairo', 5, '2026-10-18', 'Took the grease off my range hood in one wipe. No headache from the smell either.'],
+    ['Mariam H.', 'Alexandria', 5, '2026-10-18', 'Took the grease off my range hood in one wipe. No headache from the smell either.'],
     ['Omar Khaled', 'Sheikh Zayed', 5, '2026-10-02', 'I left it on the oven door for two minutes and the baked-on stains came off easily.'],
     ['منى إبراهيم', 'المهندسين', 4, '2026-09-11', 'شغال كويس جدًا على البوتاجاز، بس محتاج تسيبه شوية قبل ما تمسح.'],
     ['Youssef Nabil', 'Alexandria', 4, '2026-08-25', 'Strong on grease but gentle on my hands. Would buy again at the sale price.'],
@@ -29,7 +29,7 @@ const SAMPLE = {
   ],
   'bathroom-eucalyptus': [
     ['Hany Fouad', 'Maadi', 5, '2026-10-09', 'The foam sticks to the tiles and the limescale on the shower glass is gone. The eucalyptus smell is great.'],
-    ['ياسمين علي', 'التجمع الخامس', 4, '2026-09-22', 'كويس جدًا على الحنفيات والبانيو، بس الجير القديم محتاج مرتين.'],
+    ['ياسمين علي', 'الإسكندرية', 4, '2026-09-22', 'كويس جدًا على الحنفيات والبانيو، بس الجير القديم محتاج مرتين.'],
     ['Laila Hamdy', 'Giza', 4, '2026-09-02', 'Does the job without bleach. I use the bamboo brush for tough spots.'],
   ],
   'laundry-fresh-linen': [
@@ -44,7 +44,7 @@ const SAMPLE = {
   ],
   'floor-pine-cedar': [
     ['Ahmed K.', 'Sheikh Zayed', 5, '2026-10-14', 'We switched after our son started crawling. Floors are clean and I don’t worry when he plays on them.'],
-    ['Ingy Sherif', 'New Cairo', 5, '2026-09-26', 'No sticky film on the porcelain and the pine smell is fresh. One bottle lasts ages.'],
+    ['Ingy Sherif', 'Alexandria', 5, '2026-09-26', 'No sticky film on the porcelain and the pine smell is fresh. One bottle lasts ages.'],
     ['خالد رمضان', 'حلوان', 4, '2026-09-05', 'كويس جدًا والأرض مبتلزقش، بس كنت أحب ريحة أقوى شوية.'],
   ],
   'scrub-pink-clay': [
@@ -59,7 +59,7 @@ const SAMPLE = {
   ],
   'bamboo-brush': [
     ['Hossam Adly', 'Giza', 4, '2026-10-06', 'Solid brush with a nice grip. The bristles are stiff enough for pots but don’t scratch.'],
-    ['Aya Lotfy', 'New Cairo', 5, '2026-09-21', 'Dries quickly and still looks new after a month of daily use.'],
+    ['Aya Lotfy', 'Alexandria', 5, '2026-09-21', 'Dries quickly and still looks new after a month of daily use.'],
   ],
   'microfiber-cloths': [
     ['Rania Fawzy', 'Heliopolis', 5, '2026-10-16', 'Thick and soft. I use the colours for different rooms like they suggest.'],
@@ -73,7 +73,7 @@ const SAMPLE = {
     ['Mai El-Sayed', 'Nasr City', 5, '2026-09-11', 'Same cleaner every time, which makes a big difference.'],
   ],
   'deep-cleaning': [
-    ['Engy Farouk', 'New Cairo', 5, '2026-10-14', 'Three people for seven hours. Cabinets, tiles, windows, everything shines.'],
+    ['Engy Farouk', 'Alexandria', 5, '2026-10-14', 'Three people for seven hours. Cabinets, tiles, windows, everything shines.'],
     ['Ashraf Helmy', 'Maadi', 5, '2026-09-28', 'We booked before the holidays and the flat looked brand new.'],
     ['ريم سعيد', 'الشيخ زايد', 4, '2026-09-06', 'الشغل ممتاز، بس اتأخروا ساعة عن الميعاد.'],
   ],
@@ -83,7 +83,7 @@ const SAMPLE = {
     ['محمود حسن', 'الدقي', 5, '2026-08-31', 'الكنب رجع زي الجديد والريحة حلوة.'],
   ],
   'move-in-cleaning': [
-    ['Dalia Shawky', 'New Cairo', 5, '2026-10-07', 'We moved into a dusty new apartment and they made it ready to live in the same day.'],
+    ['Dalia Shawky', 'Alexandria', 5, '2026-10-07', 'We moved into a dusty new apartment and they made it ready to live in the same day.'],
     ['Ehab Naguib', 'Alexandria', 4, '2026-09-19', 'Thorough work inside all the cupboards. Booking a day ahead is a must.'],
   ],
   'plumber-visit': [
@@ -103,7 +103,7 @@ const SAMPLE = {
     ['إسلام فتحي', 'عين شمس', 5, '2026-09-07', 'السيفون كان بيهرّب مية، واتصلح من أول زيارة.'],
   ],
   'water-heater-installation': [
-    ['Ramy Saad', 'New Cairo', 5, '2026-10-10', 'Installed our new electric heater neatly, tested for leaks and explained the settings.'],
+    ['Ramy Saad', 'Alexandria', 5, '2026-10-10', 'Installed our new electric heater neatly, tested for leaks and explained the settings.'],
     ['سارة عبد الله', 'فيصل', 4, '2026-09-18', 'التركيب كان نضيف وسريع، بس اضطريت أشتري محبس زيادة.'],
   ],
   'kitchen-mixer-tap': [
@@ -113,7 +113,7 @@ const SAMPLE = {
   'drain-cleaner-gel': [
     ['Yara Hesham', 'Heliopolis', 4, '2026-10-12', 'Cleared a slow shower drain overnight. I now use it once a month.'],
     ['عمرو الشريف', 'المعادي', 5, '2026-09-20', 'فك الانسداد البسيط في الحوض من غير ما أجيب سباك.'],
-    ['Passant Medhat', 'New Cairo', 3, '2026-08-29', 'Helped with a slow drain, but a full blockage still needed the unclogging service.'],
+    ['Passant Medhat', 'Alexandria', 3, '2026-08-29', 'Helped with a slow drain, but a full blockage still needed the unclogging service.'],
   ],
   'ac-maintenance': [
     ['Mohamed Zaki', 'Nasr City', 5, '2026-10-01', 'Cleaned both units properly and covered the furniture. The AC cools much faster now.'],
@@ -123,11 +123,11 @@ const SAMPLE = {
   ],
   'ac-gas-refill': [
     ['Ayman Fahmy', 'Heliopolis', 5, '2026-09-23', 'They found a small leak first, fixed it, then refilled. Cooling is perfect again.'],
-    ['نورهان طارق', 'التجمع', 4, '2026-09-01', 'السعر معقول والتكييف رجع يسقّع، بس الزيارة خدت وقت أطول من المتوقع.'],
+    ['نورهان طارق', 'الإسكندرية', 4, '2026-09-01', 'السعر معقول والتكييف رجع يسقّع، بس الزيارة خدت وقت أطول من المتوقع.'],
   ],
   'ac-repair-visit': [
     ['Shady Ibrahim', 'Dokki', 5, '2026-09-10', 'The AC was leaking water inside. The technician cleared the drain line and it stopped.'],
-    ['Marwa Hosny', 'New Cairo', 4, '2026-08-27', 'Clear diagnosis and quote. Replacing the capacitor fixed the cooling.'],
+    ['Marwa Hosny', 'Alexandria', 4, '2026-08-27', 'Clear diagnosis and quote. Replacing the capacitor fixed the cooling.'],
   ],
   'ac-installation': [
     ['Bassem Lotfy', 'Sheikh Zayed', 5, '2026-08-22', 'Two units installed in one afternoon. Neat piping and they cleaned up the dust.'],
